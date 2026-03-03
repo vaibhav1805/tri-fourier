@@ -1,0 +1,116 @@
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+*.venv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+.vim/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.*.example
+
+# Project-specific
+# FalkorDBLite data
+data/graph/
+data/snapshots/
+data/*.db
+data/*.sqlite
+data/*.gdb
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Kubernetes
+kubeconfig
+kubeconfig.*
+
+# Node/NPM (if any JS tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# IDE cache
+.vscode/settings.json
+.vscode/launch.json
+.idea/workspace.xml
+
+# Compiled files
+*.pyc
+*.pyo
+
+# Miscellaneous
+.cache/
+*.egg-info
+.webassets-cache
+instance/
+.pytest_cache/
+.coverage
