@@ -1,8 +1,8 @@
-# KubeTriage — Kubernetes Incident Investigation & Automation
+# Trifourier — Kubernetes Incident Investigation & Automation
 
 **Status:** Phase 3 Complete ✅ | **Production Ready** | **148 Tests Passing**
 
-KubeTriage is an AI-powered Kubernetes troubleshooting agent that automatically investigates service incidents, correlates logs with metrics, queries your knowledge graph, and recommends remediation actions. It turns chaotic incident response into a structured, evidence-based process.
+Trifourier is an AI-powered Kubernetes troubleshooting agent that automatically investigates service incidents, correlates logs with metrics, queries your knowledge graph, and recommends remediation actions. It turns chaotic incident response into a structured, evidence-based process.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -13,7 +13,7 @@ KubeTriage is an AI-powered Kubernetes troubleshooting agent that automatically 
 │   ↓                                                                 │
 │                                                                     │
 │   ┌─────────────────────────────────────────────────────────────┐  │
-│   │  KUBETIAGE INVESTIGATION ENGINE                             │  │
+│   │  TRIFOURIER INVESTIGATION ENGINE                             │  │
 │   │  ═══════════════════════════════════════                    │  │
 │   │                                                              │  │
 │   │  📋 INTAKE     Process incident, determine scope            │  │
@@ -84,9 +84,9 @@ curl -X POST http://localhost:8000/api/triage \
 
 ---
 
-## Why KubeTriage?
+## Why Trifourier?
 
-| Problem | Before | With KubeTriage |
+| Problem | Before | With Trifourier |
 |---------|--------|-----------------|
 | **Incident Response Time** | 30-45 min (manual investigation) | 2-5 sec (automated) |
 | **Root Cause Accuracy** | 60% (guessing, hunches) | 87%+ (evidence-based) |
@@ -101,7 +101,7 @@ curl -X POST http://localhost:8000/api/triage \
 ### System Components
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                     KubeTriage Platform                      │
+│                     Trifourier Platform                      │
 ├──────────────────────────────────────────────────────────────┤
 │                                                               │
 │  ┌─────────────┐  ┌─────────────┐  ┌────────────────────┐   │
