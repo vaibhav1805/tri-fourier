@@ -15,7 +15,7 @@
 ## Documentation Map
 
 ```
-KubeTriage/
+Trifourier/
 ├── README.md (overview + quick start)
 │
 ├── docs/
@@ -23,7 +23,7 @@ KubeTriage/
 │   ├── ARCHITECTURE.md
 │   │   └── System design, components, data models
 │   ├── WORKFLOW.md
-│   │   └── 7-phase investigation process
+│   │   └── Investigation process and state machine
 │   ├── API.md
 │   │   └── REST endpoints + WebSocket + MCP tools
 │   └── DEPLOYMENT.md
@@ -40,7 +40,7 @@ KubeTriage/
 ## Reading Paths by Role
 
 ### 🚀 **First-Time User**
-1. [../README.md](../README.md) — Understand what KubeTriage does
+1. [../README.md](../README.md) — Understand what Trifourier does
 2. [WORKFLOW.md](WORKFLOW.md) — See investigation process
 3. [API.md](API.md) — Try API endpoints
 
@@ -111,13 +111,13 @@ When adding new features:
 
 ---
 
-## Version History
+## Development History
 
-- **Phase 1:** Research & Architecture (HANDOFF.md)
-- **Phase 2:** MVP Implementation (CLAUDE.md)
-- **Phase 2.5:** FalkorDBLite Integration (HANDOFF_PHASE2.5.md)
-- **Phase 3:** Specialist APIs (HANDOFF_PHASE3.md)
-- **Phase 3.1:** Documentation (this set)
+- **Initial Research:** Architecture & Technology Evaluation (see research/ directory)
+- **MVP Implementation:** Core orchestrator and specialist agents (CLAUDE.md)
+- **Graph Integration:** FalkorDBLite wiring and performance optimization (HANDOFF_PHASE2.5.md)
+- **API Integration:** CloudWatch, Prometheus, and MCP server (HANDOFF_PHASE3.md)
+- **Documentation:** Complete API and deployment guides (this set)
 
-Next: Phase 4 (Production Deployment)
+Current focus: Production deployment and operational hardening
 

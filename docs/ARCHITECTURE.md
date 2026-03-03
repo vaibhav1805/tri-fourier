@@ -1,4 +1,4 @@
-# KubeTriage — Architecture & Design
+# Trifourier — Architecture & Design
 
 ## Design Principles
 
@@ -571,19 +571,19 @@ Session cache:      ~1MB per active investigation
 
 ## Future Enhancements
 
-### Phase 5: Remediation Automation
+### Remediation Automation
 - Auto-restart pods (low risk)
 - Auto-scale deployments
 - Auto-upgrade packages
 - Rollback previous deployment
 
-### Phase 6: Advanced Analytics
+### Advanced Analytics
 - Machine learning on incident patterns
 - Anomaly detection (isolation forest)
 - Incident correlation (clustering)
 - Predictive failure modes
 
-### Phase 7: Multi-cluster
+### Multi-cluster Support
 - Cross-cluster service dependencies
 - Inter-cluster blast radius
 - Global incident correlation

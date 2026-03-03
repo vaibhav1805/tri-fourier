@@ -1,8 +1,8 @@
-# KubeTriage — Investigation Workflow & Phases
+# Trifourier — Investigation Workflow & Phases
 
 ## Overview: The 7-Phase Investigation Process
 
-When an incident is reported, KubeTriage runs through 7 structured phases to investigate, diagnose, and recommend remediation:
+When an incident is reported, Trifourier runs through 7 structured phases to investigate, diagnose, and recommend remediation:
 
 ```
 ┌──────────────┐
@@ -593,7 +593,7 @@ Recommend heap dump analysis + GC tuning.
 ---
 
 Incident ID: inv_12345
-Closed by: KubeTriage (confidence: 87%)
+Closed by: Trifourier (confidence: 87%)
 ```
 
 ---

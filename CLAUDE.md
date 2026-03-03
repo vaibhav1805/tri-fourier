@@ -49,7 +49,7 @@ skills/         -- Agent Skills YAML/MD files
 - Docker: `docker compose up --build`
 - CLI: `python -m trifourier.cli investigate "checkout is slow"`
 
-## Implementation Status (Phase 2)
+## Implementation Status
 - [x] Project structure and pyproject.toml
 - [x] Settings / configuration (pydantic-settings)
 - [x] Data models (findings, scoring, investigation state)
