@@ -2,6 +2,8 @@
 
 **Status:** Phase 3 Complete ✅ | **Production Ready** | **148 Tests Passing**
 
+> ⚠️ **DRAFT & WORK IN PROGRESS** — This project is actively under development. Features, APIs, and documentation are subject to change. Not recommended for production use without thorough testing and customization.
+
 Trifourier is an AI-powered Kubernetes troubleshooting agent that automatically investigates service incidents, correlates logs with metrics, queries your knowledge graph, and recommends remediation actions. It turns chaotic incident response into a structured, evidence-based process.
 
 ```
