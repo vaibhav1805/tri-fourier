@@ -21,7 +21,7 @@ from typing import Any
 
 import pytest
 
-from triagebot.graph.backend import FalkorDBLiteBackend
+from trifourier.graph.backend import FalkorDBLiteBackend
 
 
 # ---------------------------------------------------------------------------
@@ -157,7 +157,7 @@ async def _seed_falkordb(backend: FalkorDBLiteBackend, node_count: int) -> None:
 @pytest.fixture
 async def falkordb_backend():
     """Create a temporary FalkorDBLite backend for benchmarking."""
-    tmpdir = tempfile.mkdtemp(prefix="triagebot_bench_")
+    tmpdir = tempfile.mkdtemp(prefix="trifourier_bench_")
     backend = FalkorDBLiteBackend(data_dir=tmpdir)
     try:
         await backend.initialize()
@@ -386,7 +386,7 @@ class TestFalkorDBSeedPerformance:
 
     async def test_seed_1000_nodes(self) -> None:
         """Seeding 1000-node topology into FalkorDBLite: < 120s."""
-        tmpdir = tempfile.mkdtemp(prefix="triagebot_seed_bench_")
+        tmpdir = tempfile.mkdtemp(prefix="trifourier_seed_bench_")
         backend = FalkorDBLiteBackend(data_dir=tmpdir)
         try:
             await backend.initialize()

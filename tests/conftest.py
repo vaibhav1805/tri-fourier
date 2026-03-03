@@ -1,5 +1,5 @@
 """
-Root conftest.py for TriageBot test suite.
+Root conftest.py for Trifourier test suite.
 
 Provides shared fixtures, mock factories, and test configuration
 used across unit, integration, e2e, performance, and security tests.

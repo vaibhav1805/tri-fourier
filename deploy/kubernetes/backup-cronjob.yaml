@@ -3,10 +3,10 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: autotriage-bgsave
-  namespace: autotriage
+  name: trifourier-bgsave
+  namespace: trifourier
   labels:
-    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/name: trifourier
     app.kubernetes.io/component: backup
 spec:
   schedule: "*/15 * * * *"
@@ -26,7 +26,7 @@ spec:
                 - -c
                 - |
                   echo "Triggering BGSAVE snapshot..."
-                  curl -sf http://autotriage.autotriage.svc.cluster.local/api/admin/bgsave \
+                  curl -sf http://trifourier.trifourier.svc.cluster.local/api/admin/bgsave \
                     -X POST \
                     -H "Content-Type: application/json" \
                     && echo "BGSAVE triggered successfully" \
@@ -43,10 +43,10 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: autotriage-s3-export
-  namespace: autotriage
+  name: trifourier-s3-export
+  namespace: trifourier
   labels:
-    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/name: trifourier
     app.kubernetes.io/component: backup
 spec:
   schedule: "0 2 * * *"  # 2 AM daily
@@ -58,7 +58,7 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
-          serviceAccountName: autotriage
+          serviceAccountName: trifourier
           securityContext:
             runAsNonRoot: true
             runAsUser: 1001
@@ -72,7 +72,7 @@ spec:
                 - -c
                 - |
                   TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-                  BUCKET="${S3_BACKUP_BUCKET:-autotriage-backups}"
+                  BUCKET="${S3_BACKUP_BUCKET:-trifourier-backups}"
                   PREFIX="${S3_BACKUP_PREFIX:-graph-snapshots}"
                   echo "Exporting graph data to s3://${BUCKET}/${PREFIX}/${TIMESTAMP}/"
                   aws s3 sync /app/data/graph/ "s3://${BUCKET}/${PREFIX}/${TIMESTAMP}/" \
@@ -81,7 +81,7 @@ spec:
                     || echo "Export failed"
               env:
                 - name: S3_BACKUP_BUCKET
-                  value: "autotriage-backups"
+                  value: "trifourier-backups"
                 - name: S3_BACKUP_PREFIX
                   value: "graph-snapshots"
               volumeMounts:
@@ -98,4 +98,4 @@ spec:
           volumes:
             - name: graph-data
               persistentVolumeClaim:
-                claimName: autotriage-graph-pvc
+                claimName: trifourier-graph-pvc

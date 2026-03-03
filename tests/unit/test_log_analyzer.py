@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from triagebot.agents.log_analyzer import (
+from trifourier.agents.log_analyzer import (
     analyze_logs,
     correlate_events,
     detect_error_patterns,
@@ -27,7 +27,7 @@ class TestLogSearch:
 
     def test_search_cloudwatch_returns_formatted_results(self, mock_cloudwatch):
         """CloudWatch search should return structured log entries."""
-        with patch("triagebot.agents.log_analyzer._get_cloudwatch_client", return_value=mock_cloudwatch):
+        with patch("trifourier.agents.log_analyzer._get_cloudwatch_client", return_value=mock_cloudwatch):
             results = search_cloudwatch(
                 log_group="/aws/eks/production/checkout-api",
                 query="fields @timestamp, @message | filter @message like /ERROR/",
@@ -39,7 +39,7 @@ class TestLogSearch:
 
     def test_search_cloudwatch_handles_empty_results(self):
         """Should return empty list when CloudWatch is unavailable."""
-        with patch("triagebot.agents.log_analyzer._get_cloudwatch_client", return_value=None):
+        with patch("trifourier.agents.log_analyzer._get_cloudwatch_client", return_value=None):
             results = search_cloudwatch(
                 log_group="/aws/eks/production/checkout-api",
                 query="fields @timestamp, @message",
@@ -49,7 +49,7 @@ class TestLogSearch:
 
     def test_search_cloudwatch_validates_time_range(self, mock_cloudwatch):
         """Should handle various time range formats."""
-        with patch("triagebot.agents.log_analyzer._get_cloudwatch_client", return_value=mock_cloudwatch):
+        with patch("trifourier.agents.log_analyzer._get_cloudwatch_client", return_value=mock_cloudwatch):
             # Valid formats
             search_cloudwatch("/aws/eks/prod/svc", "fields @message", time_range="15m")
             search_cloudwatch("/aws/eks/prod/svc", "fields @message", time_range="1h")
@@ -166,7 +166,7 @@ class TestAnalyzeLogs:
 
     def test_analyze_logs_returns_empty_when_cloudwatch_unavailable(self):
         """Should return empty findings when CloudWatch is not available."""
-        with patch("triagebot.agents.log_analyzer._get_cloudwatch_client", return_value=None):
+        with patch("trifourier.agents.log_analyzer._get_cloudwatch_client", return_value=None):
             findings = analyze_logs(
                 services=["checkout-api"],
                 query="errors",
@@ -180,7 +180,7 @@ class TestAnalyzeLogs:
             {"timestamp": "2026-02-28T10:00:00Z", "message": "ERROR: Connection pool exhausted"},
             {"timestamp": "2026-02-28T10:00:05Z", "message": "ERROR: No available connections"},
         ]
-        with patch("triagebot.agents.log_analyzer.search_cloudwatch", return_value=mock_entries):
+        with patch("trifourier.agents.log_analyzer.search_cloudwatch", return_value=mock_entries):
             findings = analyze_logs(
                 services=["checkout-api"],
                 query="connection",

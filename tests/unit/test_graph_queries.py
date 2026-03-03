@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from triagebot.graph.backend import InMemoryGraphBackend
+from trifourier.graph.backend import InMemoryGraphBackend
 
 
 @pytest.fixture

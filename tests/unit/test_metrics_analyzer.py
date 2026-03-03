@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from triagebot.agents.metrics_analyzer import (
+from trifourier.agents.metrics_analyzer import (
     analyze_metrics,
     compare_to_baseline,
     detect_anomalies,
@@ -179,7 +179,7 @@ class TestQueryPrometheus:
 
     def test_query_prometheus_handles_connection_error(self):
         """Should return empty result when Prometheus is unavailable."""
-        with patch("triagebot.agents.metrics_analyzer.get_settings") as mock_settings:
+        with patch("trifourier.agents.metrics_analyzer.get_settings") as mock_settings:
             mock_settings.return_value = MagicMock(prometheus_url="http://nonexistent:9090")
             result = query_prometheus("up", time_range="5m")
             assert result["status"] == "error"
@@ -198,7 +198,7 @@ class TestQueryPrometheus:
         }
         mock_response.raise_for_status = MagicMock()
 
-        with patch("triagebot.agents.metrics_analyzer.get_settings") as mock_settings:
+        with patch("trifourier.agents.metrics_analyzer.get_settings") as mock_settings:
             mock_settings.return_value = MagicMock(prometheus_url="http://localhost:9090")
             with patch("httpx.get", return_value=mock_response):
                 result = query_prometheus('up{service="test"}', time_range="5m")
@@ -212,9 +212,9 @@ class TestAnalyzeMetrics:
 
     def test_analyze_metrics_returns_empty_when_sources_unavailable(self):
         """Should return empty findings when all sources fail."""
-        with patch("triagebot.agents.metrics_analyzer.query_prometheus") as mock_prom:
+        with patch("trifourier.agents.metrics_analyzer.query_prometheus") as mock_prom:
             mock_prom.return_value = {"status": "error", "data": {"resultType": "matrix", "result": []}}
-            with patch("triagebot.agents.metrics_analyzer.query_cloudwatch_metrics", return_value=[]):
+            with patch("trifourier.agents.metrics_analyzer.query_cloudwatch_metrics", return_value=[]):
                 findings = analyze_metrics(
                     services=["checkout-api"],
                     query="latency",
@@ -251,8 +251,8 @@ class TestAnalyzeMetrics:
                 return prom_response
             return {"status": "success", "data": {"resultType": "matrix", "result": []}}
 
-        with patch("triagebot.agents.metrics_analyzer.query_prometheus", side_effect=mock_prom):
-            with patch("triagebot.agents.metrics_analyzer.query_cloudwatch_metrics", return_value=[]):
+        with patch("trifourier.agents.metrics_analyzer.query_prometheus", side_effect=mock_prom):
+            with patch("trifourier.agents.metrics_analyzer.query_cloudwatch_metrics", return_value=[]):
                 findings = analyze_metrics(
                     services=["checkout-api"],
                     query="latency spike",

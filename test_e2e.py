@@ -8,14 +8,14 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from triagebot.agents.orchestrator import get_engine, query_service_dependencies, get_service_context
-from triagebot.graph.backend import get_graph_backend
+from trifourier.agents.orchestrator import get_engine, query_service_dependencies, get_service_context
+from trifourier.graph.backend import get_graph_backend
 from scripts.seed_graph import seed
 
 
 async def main():
     """Run E2E test."""
-    print("🚀 TriageBot E2E Test\n")
+    print("🚀 Trifourier E2E Test\n")
 
     # 1. Seed the graph
     print("Step 1: Seeding knowledge graph...")

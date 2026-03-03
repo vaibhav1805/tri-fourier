@@ -1,16 +1,16 @@
 services:
-  autotriage:
+  trifourier:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: autotriage
+    container_name: trifourier
     ports:
       - "8000:8000"
     volumes:
       # Persist graph data across container restarts
-      - autotriage-graph:/app/data/graph
+      - trifourier-graph:/app/data/graph
       # Persist snapshots
-      - autotriage-snapshots:/app/data/snapshots
+      - trifourier-snapshots:/app/data/snapshots
       # Mount source code for development (live reload)
       - ./src:/app/src:ro
       - ./config:/app/config:ro
@@ -58,7 +58,7 @@ services:
           memory: 2G
 
 volumes:
-  autotriage-graph:
+  trifourier-graph:
     driver: local
-  autotriage-snapshots:
+  trifourier-snapshots:
     driver: local

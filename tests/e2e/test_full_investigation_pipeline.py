@@ -23,9 +23,9 @@ import pytest
 from fastapi.testclient import TestClient
 from httpx import ASGITransport, AsyncClient
 
-from triagebot.api.server import TriageRequest, app, _investigations
-from triagebot.graph.backend import InMemoryGraphBackend, get_graph_backend, _backend
-from triagebot.models.findings import (
+from trifourier.api.server import TriageRequest, app, _investigations
+from trifourier.graph.backend import InMemoryGraphBackend, get_graph_backend, _backend
+from trifourier.models.findings import (
     ConfidenceLevel,
     DiagnosticFinding,
     InvestigationResult,
@@ -33,7 +33,7 @@ from triagebot.models.findings import (
     Phase,
     Severity,
 )
-from triagebot.models.scoring import ConfidenceScorer, aggregate_findings, classify_confidence
+from trifourier.models.scoring import ConfidenceScorer, aggregate_findings, classify_confidence
 
 
 # ---------------------------------------------------------------------------
@@ -107,8 +107,8 @@ async def _seed_graph(graph: InMemoryGraphBackend) -> None:
 @pytest.fixture(autouse=True)
 def _reset_singletons():
     """Reset module-level singletons between tests."""
-    import triagebot.graph.backend as gb_mod
-    import triagebot.agents.orchestrator as orch_mod
+    import trifourier.graph.backend as gb_mod
+    import trifourier.agents.orchestrator as orch_mod
 
     old_backend = gb_mod._backend
     old_engine = orch_mod._engine
@@ -124,7 +124,7 @@ def _reset_singletons():
 @pytest.fixture
 async def seeded_graph() -> InMemoryGraphBackend:
     """Return an in-memory graph pre-seeded with checkout topology."""
-    import triagebot.graph.backend as gb_mod
+    import trifourier.graph.backend as gb_mod
 
     graph = InMemoryGraphBackend()
     await graph.initialize()
@@ -167,7 +167,7 @@ def mock_strands_agent():
     mock_agent_instance.__call__ = MagicMock(return_value=fake_output)
     mock_agent_instance.return_value = fake_output
 
-    with patch("triagebot.agents.orchestrator.Agent", return_value=mock_agent_instance):
+    with patch("trifourier.agents.orchestrator.Agent", return_value=mock_agent_instance):
         yield mock_agent_instance
 
 
@@ -212,7 +212,7 @@ class TestFullInvestigationPipeline:
         self, seeded_graph, mock_strands_agent
     ):
         """Orchestrator should produce findings, root cause, and confidence."""
-        from triagebot.agents.orchestrator import InvestigationEngine
+        from trifourier.agents.orchestrator import InvestigationEngine
 
         engine = InvestigationEngine()
         result = await engine.investigate("checkout service is slow")
@@ -231,7 +231,7 @@ class TestFullInvestigationPipeline:
         self, seeded_graph, mock_strands_agent
     ):
         """Affected services should be extracted from findings."""
-        from triagebot.agents.orchestrator import InvestigationEngine
+        from trifourier.agents.orchestrator import InvestigationEngine
 
         engine = InvestigationEngine()
         result = await engine.investigate("checkout service is slow")
@@ -242,7 +242,7 @@ class TestFullInvestigationPipeline:
         self, seeded_graph, mock_strands_agent
     ):
         """Phase should advance past TRIAGE/DIAGNOSE to SYNTHESIZE or beyond."""
-        from triagebot.agents.orchestrator import InvestigationEngine
+        from trifourier.agents.orchestrator import InvestigationEngine
 
         engine = InvestigationEngine()
         result = await engine.investigate("checkout service is slow")
@@ -253,7 +253,7 @@ class TestFullInvestigationPipeline:
         self, seeded_graph, mock_strands_agent
     ):
         """completed_at should be set after investigation finishes."""
-        from triagebot.agents.orchestrator import InvestigationEngine
+        from trifourier.agents.orchestrator import InvestigationEngine
 
         engine = InvestigationEngine()
         result = await engine.investigate("checkout service is slow")
@@ -263,12 +263,12 @@ class TestFullInvestigationPipeline:
 
     async def test_investigation_handles_agent_failure(self, seeded_graph):
         """When the agent throws, investigation should be marked FAILED."""
-        from triagebot.agents.orchestrator import InvestigationEngine
+        from trifourier.agents.orchestrator import InvestigationEngine
 
         mock_agent = MagicMock()
         mock_agent.side_effect = RuntimeError("LLM unavailable")
 
-        with patch("triagebot.agents.orchestrator.Agent", return_value=mock_agent):
+        with patch("trifourier.agents.orchestrator.Agent", return_value=mock_agent):
             engine = InvestigationEngine()
             result = await engine.investigate("checkout service is slow")
 
@@ -484,7 +484,7 @@ class TestSlackWorkflow:
 
     def test_investigation_result_generates_blocks(self):
         """_post_investigation_result should format findings into Slack blocks."""
-        from triagebot.api.slack_bot import _post_investigation_result
+        from trifourier.api.slack_bot import _post_investigation_result
 
         result = InvestigationResult(
             investigation_id="inv_test123",
@@ -520,7 +520,7 @@ class TestSlackWorkflow:
 
     async def test_slack_approval_buttons_included_for_approval_level(self, mock_slack_client):
         """When confidence is APPROVAL_REQUIRED, Slack should show approve/deny buttons."""
-        from triagebot.api.slack_bot import _post_investigation_result
+        from trifourier.api.slack_bot import _post_investigation_result
 
         result = InvestigationResult(
             investigation_id="inv_test456",
@@ -565,7 +565,7 @@ class TestSlackWorkflow:
 
     async def test_slack_no_buttons_for_report_only(self, mock_slack_client):
         """When confidence is REPORT_ONLY, no approval buttons should appear."""
-        from triagebot.api.slack_bot import _post_investigation_result
+        from trifourier.api.slack_bot import _post_investigation_result
 
         result = InvestigationResult(
             investigation_id="inv_test789",
@@ -611,14 +611,14 @@ class TestPhaseTransitions:
     """Validate that only valid phase transitions are allowed."""
 
     def test_valid_transitions(self):
-        from triagebot.models.findings import validate_transition, PHASE_TRANSITIONS
+        from trifourier.models.findings import validate_transition, PHASE_TRANSITIONS
 
         for phase, targets in PHASE_TRANSITIONS.items():
             for target in targets:
                 validate_transition(phase, target)  # Should not raise
 
     def test_invalid_transition_raises(self):
-        from triagebot.models.findings import validate_transition, InvalidTransition
+        from trifourier.models.findings import validate_transition, InvalidTransition
 
         with pytest.raises(InvalidTransition):
             validate_transition(Phase.INTAKE, Phase.DIAGNOSE)  # Must go through TRIAGE

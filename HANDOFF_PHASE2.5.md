@@ -1,4 +1,4 @@
-# TriageBot Phase 2.5 - Integration Complete
+# Trifourier Phase 2.5 - Integration Complete
 
 **Date:** 2026-03-02
 **Status:** ✅ DONE - Ready for Phase 3 (Specialist API Integration)
@@ -21,17 +21,17 @@ Phase 2.5 successfully wired real FalkorDBLite backend and activated full test s
 ## What's Done
 
 ### 1. FalkorDBLite Backend Wired (5 hours)
-**File:** `src/triagebot/graph/backend.py`
+**File:** `src/trifourier/graph/backend.py`
 - Fixed module import: `from redislite import FalkorDB` (v0.8.0+)
 - Fixed response header parsing (FalkorDB returns `[type_code, name]` tuples)
 - Auto-creates `data/graph/` directory on init
 - Subprocess isolation: safe shutdown on SIGTERM
 
-**File:** `src/triagebot/config/settings.py`
+**File:** `src/trifourier/config/settings.py`
 - Default `graph_data_dir = "data/graph"` (local dev friendly)
 - Docker env override still works: `TRIAGEBOT_GRAPH_DATA_DIR=/app/data/graph`
 
-**File:** `src/triagebot/agents/orchestrator.py`
+**File:** `src/trifourier/agents/orchestrator.py`
 - Added `_run_async()` helper: bridges sync Strands @tool to async backend
 - Replaced mock `query_service_dependencies` → real Cypher `CYPHER_QUERIES["service_dependencies"]`
 - Replaced mock `get_service_context` → real graph health lookup
@@ -69,7 +69,7 @@ Phase 2.5 successfully wired real FalkorDBLite backend and activated full test s
 | Mixed workload P99 | < 100ms | ✓ | PASS |
 
 ### 4. Bug Fix: Max Depth Enforcement
-**File:** `src/triagebot/graph/backend.py` line 148
+**File:** `src/trifourier/graph/backend.py` line 148
 - **Issue:** `get_blast_radius()` was adding neighbors even when `depth == max_depth`
 - **Fix:** Gate neighbor expansion: `if depth < max_depth: add_neighbors()`
 - **Impact:** Prevents runaway traversals; blast radius now exact
@@ -146,7 +146,7 @@ Service Health Query (checkout-api):
 
 ### Setup
 ```bash
-cd projects/triagebot
+cd projects/trifourier
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 ```
@@ -183,9 +183,9 @@ uvicorn src.api.main:app --reload
 
 ## Critical Files Modified
 
-1. `src/triagebot/graph/backend.py` — FalkorDBLite wiring + bug fix
-2. `src/triagebot/agents/orchestrator.py` — Real graph queries
-3. `src/triagebot/config/settings.py` — Graph data dir config
+1. `src/trifourier/graph/backend.py` — FalkorDBLite wiring + bug fix
+2. `src/trifourier/agents/orchestrator.py` — Real graph queries
+3. `src/trifourier/config/settings.py` — Graph data dir config
 4. `tests/unit/test_graph_queries.py` — 13 live unit tests
 5. `tests/performance/test_response_times.py` — 19 benchmarks
 

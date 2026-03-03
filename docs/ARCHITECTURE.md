@@ -28,7 +28,7 @@
                                │
               ┌────────────────▼─────────────────┐
               │   FASTAPI APPLICATION SERVER    │
-              │   (src/triagebot/api/main.py)   │
+              │   (src/trifourier/api/main.py)   │
               └────────────────┬────────────────┘
                                │
         ┌──────────────────────┼──────────────────────┐

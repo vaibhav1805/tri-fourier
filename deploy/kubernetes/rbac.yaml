@@ -3,9 +3,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: autotriage-reader
+  name: trifourier-reader
   labels:
-    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/name: trifourier
     app.kubernetes.io/component: rbac
 rules:
   - apiGroups: ["", "apps", "batch"]
@@ -41,26 +41,26 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: autotriage-reader-binding
+  name: trifourier-reader-binding
   labels:
-    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/name: trifourier
     app.kubernetes.io/component: rbac
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: autotriage-reader
+  name: trifourier-reader
 subjects:
   - kind: ServiceAccount
-    name: autotriage
-    namespace: autotriage
+    name: trifourier
+    namespace: trifourier
 ---
 # Remediation role (separate, conditionally bound)
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: autotriage-remediator
+  name: trifourier-remediator
   labels:
-    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/name: trifourier
     app.kubernetes.io/component: rbac
 rules:
   - apiGroups: ["apps"]
@@ -82,15 +82,15 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: autotriage-remediator-binding
+  name: trifourier-remediator-binding
   labels:
-    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/name: trifourier
     app.kubernetes.io/component: rbac
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: autotriage-remediator
+  name: trifourier-remediator
 subjects:
   - kind: ServiceAccount
-    name: autotriage
-    namespace: autotriage
+    name: trifourier
+    namespace: trifourier

@@ -21,8 +21,8 @@ from typing import Any
 
 import pytest
 
-from triagebot.graph.backend import InMemoryGraphBackend
-from triagebot.graph.schema import CYPHER_QUERIES
+from trifourier.graph.backend import InMemoryGraphBackend
+from trifourier.graph.schema import CYPHER_QUERIES
 
 
 # ---------------------------------------------------------------------------

@@ -43,8 +43,8 @@ class TestAppMetadata:
     """Test the FastAPI application configuration."""
 
     def test_app_title(self):
-        """App title should be 'AutoTriage'."""
-        assert app.title == "AutoTriage"
+        """App title should be 'Trifourier'."""
+        assert app.title == "Trifourier"
 
     def test_app_version(self):
         """App version should be set."""

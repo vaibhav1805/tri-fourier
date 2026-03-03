@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import asyncio
 
-from triagebot.graph.backend import get_graph_backend
+from trifourier.graph.backend import get_graph_backend
 
 
 async def seed() -> None:

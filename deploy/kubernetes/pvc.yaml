@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: autotriage-graph-pvc
-  namespace: autotriage
+  name: trifourier-graph-pvc
+  namespace: trifourier
   labels:
-    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/name: trifourier
     app.kubernetes.io/component: storage
 spec:
   accessModes:

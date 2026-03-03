@@ -1,4 +1,4 @@
-# TriageBot Phase 3 - Specialist APIs & MCP Server Complete
+# Trifourier Phase 3 - Specialist APIs & MCP Server Complete
 
 **Date:** 2026-03-02 (08:15 UTC)
 **Status:** ✅ 95% COMPLETE (staging deployment in final testing)
@@ -25,7 +25,7 @@ Phase 3 delivered all specialist agent integrations with real APIs, a Graphiti M
 ## What's Done
 
 ### 1. CloudWatch Logs Integration (320 LOC)
-**File:** `src/triagebot/agents/log_analyzer.py`
+**File:** `src/trifourier/agents/log_analyzer.py`
 
 Implemented:
 - `search_cloudwatch()` — Real boto3 CloudWatch Logs Insights queries with async polling
@@ -61,7 +61,7 @@ test_analyze_logs_graceful_fallback
 ```
 
 ### 2. Prometheus + CloudWatch Metrics Integration (380 LOC)
-**File:** `src/triagebot/agents/metrics_analyzer.py`
+**File:** `src/trifourier/agents/metrics_analyzer.py`
 
 Implemented:
 - `query_prometheus()` — Real PromQL range queries via httpx against configurable Prometheus URL
@@ -102,7 +102,7 @@ test_anomaly_threshold_tuning
 ```
 
 ### 3. Graphiti MCP Server (230 LOC)
-**File:** `src/triagebot/mcp_server.py` (NEW)
+**File:** `src/trifourier/mcp_server.py` (NEW)
 
 Implemented:
 - `query_graph(query_type, **params)` — Async function supporting all CYPHER_QUERIES types + custom Cypher
@@ -238,12 +238,12 @@ Overall:                    46% (awaiting CLI + specialist stubs)
 
 | File | Action | Lines | Purpose |
 |------|--------|-------|---------|
-| `src/triagebot/agents/log_analyzer.py` | NEW | 320 | CloudWatch integration |
-| `src/triagebot/agents/metrics_analyzer.py` | NEW | 380 | Prometheus integration |
-| `src/triagebot/mcp_server.py` | NEW | 230 | MCP server + tools |
-| `src/triagebot/agents/orchestrator.py` | MODIFIED | +60 | Wired 6 tools |
-| `src/triagebot/config/settings.py` | MODIFIED | +3 | prometheus_url setting |
-| `src/triagebot/api/server.py` | MODIFIED | +4 | MCP route registration |
+| `src/trifourier/agents/log_analyzer.py` | NEW | 320 | CloudWatch integration |
+| `src/trifourier/agents/metrics_analyzer.py` | NEW | 380 | Prometheus integration |
+| `src/trifourier/mcp_server.py` | NEW | 230 | MCP server + tools |
+| `src/trifourier/agents/orchestrator.py` | MODIFIED | +60 | Wired 6 tools |
+| `src/trifourier/config/settings.py` | MODIFIED | +3 | prometheus_url setting |
+| `src/trifourier/api/server.py` | MODIFIED | +4 | MCP route registration |
 | `tests/unit/test_log_analyzer.py` | REWRITTEN | 13 | Activated stubs |
 | `tests/unit/test_metrics_analyzer.py` | REWRITTEN | 15 | Activated stubs |
 | `tests/integration/test_orchestrator_specialists.py` | REWRITTEN | 9 | Activated stubs |
@@ -291,7 +291,7 @@ Overall:                    46% (awaiting CLI + specialist stubs)
 
 ### Verify All Components Work
 ```bash
-cd projects/triagebot
+cd projects/trifourier
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
@@ -311,7 +311,7 @@ uvicorn src.api.main:app --reload
 ### Test an Investigation
 ```bash
 # CLI
-python -m triagebot.cli investigate "checkout service slow"
+python -m trifourier.cli investigate "checkout service slow"
 
 # API
 curl -X POST http://localhost:8000/api/triage \

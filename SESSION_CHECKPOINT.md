@@ -1,4 +1,4 @@
-# TriageBot Session Checkpoint — 2026-03-02/03
+# Trifourier Session Checkpoint — 2026-03-02/03
 
 **Session Status:** PAUSED (all work committed)
 **Date:** March 2-3, 2026
@@ -36,7 +36,7 @@
 
 ✅ **Runnable:**
 - Mission Control: http://localhost:3000
-- TriageBot API: Ready for deployment
+- Trifourier API: Ready for deployment
 - All specialist agents: CloudWatch, Prometheus, Graph wired
 
 ✅ **Tested:**
@@ -56,7 +56,7 @@
 
 ### Quick Start (5 minutes)
 ```bash
-cd projects/triagebot
+cd projects/trifourier
 git log --oneline | head -5  # Verify commits: b4af839, bc8ee7f
 pnpm dev  # Mission Control running at 3000
 ```
@@ -76,9 +76,9 @@ uvicorn src.api.main:app --reload
 ### Next Phase Option: Production Deployment
 ```bash
 # Docker push to GHCR
-docker build -t triagebot:phase3 .
-docker tag triagebot:phase3 ghcr.io/USERNAME/triagebot:phase3
-docker push ghcr.io/USERNAME/triagebot:phase3
+docker build -t trifourier:phase3 .
+docker tag trifourier:phase3 ghcr.io/USERNAME/trifourier:phase3
+docker push ghcr.io/USERNAME/trifourier:phase3
 
 # Deploy to production K8s
 kubectl apply -f deploy/kubernetes/
@@ -89,13 +89,13 @@ kubectl apply -f deploy/kubernetes/
 ## Key Files Changed
 
 **Phase 2.5:**
-- src/triagebot/graph/backend.py (FalkorDBLite wiring)
-- src/triagebot/agents/orchestrator.py (real graph queries)
+- src/trifourier/graph/backend.py (FalkorDBLite wiring)
+- src/trifourier/agents/orchestrator.py (real graph queries)
 
 **Phase 3:**
-- src/triagebot/agents/log_analyzer.py (NEW - CloudWatch)
-- src/triagebot/agents/metrics_analyzer.py (NEW - Prometheus)
-- src/triagebot/mcp_server.py (NEW - MCP tools)
+- src/trifourier/agents/log_analyzer.py (NEW - CloudWatch)
+- src/trifourier/agents/metrics_analyzer.py (NEW - Prometheus)
+- src/trifourier/mcp_server.py (NEW - MCP tools)
 - tests/e2e/test_full_investigation_pipeline.py (35 E2E tests)
 
 ---

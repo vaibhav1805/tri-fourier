@@ -1,8 +1,8 @@
-# TriageBot - Kubernetes-first Production Troubleshooting Agent
+# Trifourier - Kubernetes-first Production Troubleshooting Agent
 
 ## Quick Start
 ```bash
-cd projects/triagebot
+cd projects/trifourier
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 pytest -m unit
@@ -10,7 +10,7 @@ pytest -m unit
 
 ## Project Structure
 ```
-src/triagebot/
+src/trifourier/
   agents/       -- Strands Agent definitions (orchestrator, specialists)
   tools/        -- @tool functions (CloudWatch, Prometheus, kubectl, etc.)
   skills/       -- Skill loading (Agent Skills spec / agentskills.io)
@@ -47,7 +47,7 @@ skills/         -- Agent Skills YAML/MD files
 - Lint: `ruff check src/`
 - Start API: `uvicorn src.api.main:app --reload`
 - Docker: `docker compose up --build`
-- CLI: `python -m triagebot.cli investigate "checkout is slow"`
+- CLI: `python -m trifourier.cli investigate "checkout is slow"`
 
 ## Implementation Status (Phase 2)
 - [x] Project structure and pyproject.toml
@@ -71,6 +71,6 @@ skills/         -- Agent Skills YAML/MD files
 - [ ] Activate skipped unit tests with real implementations
 
 ## Reference Docs
-- Architecture: /research/autotriage/ARCHITECTURE.md
-- Project plan: /research/autotriage/PROJECT.md
+- Architecture: /research/trifourier/ARCHITECTURE.md
+- Project plan: /research/trifourier/PROJECT.md
 - Strands docs: https://strandsagents.com/latest/documentation/docs/

@@ -1,0 +1,14 @@
+apiVersion: v2
+name: trifourier
+description: Trifourier Agent - Kubernetes-first production troubleshooting
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - trifourier
+  - kubernetes
+  - troubleshooting
+  - agent
+  - ai
+maintainers:
+  - name: Trifourier Team

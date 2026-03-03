@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: autotriage
+  name: trifourier
   labels:
-    app.kubernetes.io/name: autotriage
-    app.kubernetes.io/part-of: autotriage
+    app.kubernetes.io/name: trifourier
+    app.kubernetes.io/part-of: trifourier

@@ -45,7 +45,7 @@ KubeTriage is an AI-powered Kubernetes troubleshooting agent that automatically 
 
 ### Installation
 ```bash
-cd /Users/flurryhead/Developer/Opensource/triagebot
+cd /Users/flurryhead/Developer/Opensource/trifourier
 
 # Setup Python environment
 python -m venv .venv && source .venv/bin/activate
@@ -64,7 +64,7 @@ export TRIAGEBOT_GRAPH_BACKEND=falkordb_lite
 export PROMETHEUS_URL=http://localhost:9090
 export AWS_REGION=us-east-1
 
-uvicorn src.triagebot.api.main:app --reload
+uvicorn src.trifourier.api.main:app --reload
 ```
 
 ### Test an Investigation
@@ -213,8 +213,8 @@ INCIDENT REPORT
 ## Project Structure
 
 ```
-triagebot/
-├── src/triagebot/
+trifourier/
+├── src/trifourier/
 │   ├── agents/
 │   │   ├── orchestrator.py      — Main investigation engine (Strands)
 │   │   ├── log_analyzer.py      — CloudWatch specialist (320 LOC)
@@ -336,7 +336,7 @@ pytest tests/ -v
 pytest tests/e2e/test_full_investigation_pipeline.py -v
 
 # With coverage
-pytest tests/ --cov=src/triagebot --cov-report=term-missing
+pytest tests/ --cov=src/trifourier --cov-report=term-missing
 ```
 
 ### Type Checking

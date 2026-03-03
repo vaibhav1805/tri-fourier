@@ -1,8 +1,8 @@
 FROM python:3.12-slim AS base
 
 # Metadata
-LABEL maintainer="AutoTriage Team"
-LABEL description="AutoTriage Agent - Kubernetes-first production troubleshooting"
+LABEL maintainer="Trifourier Team"
+LABEL description="Trifourier Agent - Kubernetes-first production troubleshooting"
 
 # Prevent Python from writing .pyc files and enable unbuffered stdout/stderr
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -17,8 +17,8 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
-RUN groupadd --gid 1001 autotriage && \
-    useradd --uid 1001 --gid autotriage --shell /bin/bash --create-home autotriage
+RUN groupadd --gid 1001 trifourier && \
+    useradd --uid 1001 --gid trifourier --shell /bin/bash --create-home trifourier
 
 WORKDIR /app
 
@@ -31,15 +31,15 @@ COPY src/ /app/src/
 COPY config/ /app/config/
 COPY scripts/ /app/scripts/
 
-# Add src to Python path so 'import triagebot' works
+# Add src to Python path so 'import trifourier' works
 ENV PYTHONPATH="/app/src:${PYTHONPATH}"
 
 # Create data directories for persistence
 RUN mkdir -p /app/data/graph /app/data/snapshots /app/logs && \
-    chown -R autotriage:autotriage /app
+    chown -R trifourier:trifourier /app
 
 # Switch to non-root user
-USER autotriage
+USER trifourier
 
 # Expose API port
 EXPOSE 8000

@@ -1,4 +1,4 @@
-# AutoTriage Deployment Guide
+# Trifourier Deployment Guide
 
 ## Table of Contents
 
@@ -29,7 +29,7 @@
 ### Quick Start
 
 ```bash
-cd projects/triagebot
+cd projects/trifourier
 
 # Create .env from template
 cp .env.example .env
@@ -67,18 +67,18 @@ LOG_LEVEL=debug
 
 ### Data Persistence
 
-Graph data is stored in the `autotriage-graph` Docker volume. Data survives container restarts but not `docker compose down -v`.
+Graph data is stored in the `trifourier-graph` Docker volume. Data survives container restarts but not `docker compose down -v`.
 
 ```bash
 # Inspect volume
-docker volume inspect triagebot_autotriage-graph
+docker volume inspect trifourier_trifourier-graph
 
 # Backup volume to local directory
-docker run --rm -v triagebot_autotriage-graph:/data -v $(pwd)/backup:/backup \
+docker run --rm -v trifourier_trifourier-graph:/data -v $(pwd)/backup:/backup \
   alpine tar czf /backup/graph-backup.tar.gz -C /data .
 
 # Restore from backup
-docker run --rm -v triagebot_autotriage-graph:/data -v $(pwd)/backup:/backup \
+docker run --rm -v trifourier_trifourier-graph:/data -v $(pwd)/backup:/backup \
   alpine sh -c "cd /data && tar xzf /backup/graph-backup.tar.gz"
 ```
 
@@ -94,24 +94,24 @@ minikube start --cpus=4 --memory=8192 --driver=docker
 
 # Build image inside Minikube's Docker
 eval $(minikube docker-env)
-docker build -t autotriage:latest .
+docker build -t trifourier:latest .
 
 # Apply manifests
 kubectl apply -k deploy/kubernetes/
 
 # Check deployment status
-kubectl get all -n autotriage
+kubectl get all -n trifourier
 
 # Wait for pod to be ready
-kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=autotriage \
-  -n autotriage --timeout=120s
+kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=trifourier \
+  -n trifourier --timeout=120s
 ```
 
 ### Accessing the Service
 
 ```bash
 # Port forward
-kubectl port-forward svc/autotriage 8000:80 -n autotriage
+kubectl port-forward svc/trifourier 8000:80 -n trifourier
 
 # Test health endpoint
 curl http://localhost:8000/health
@@ -120,7 +120,7 @@ curl http://localhost:8000/health
 ### View Logs
 
 ```bash
-kubectl logs -f deployment/autotriage -n autotriage
+kubectl logs -f deployment/trifourier -n trifourier
 ```
 
 ### Clean Up
@@ -144,16 +144,16 @@ minikube stop
 
 2. **Create secrets** (use External Secrets or CSI driver in production):
    ```bash
-   kubectl create secret generic autotriage-secrets \
+   kubectl create secret generic trifourier-secrets \
      --from-literal=SLACK_BOT_TOKEN=xoxb-... \
      --from-literal=SLACK_APP_TOKEN=xapp-... \
      --from-literal=SLACK_SIGNING_SECRET=... \
-     -n autotriage
+     -n trifourier
    ```
 
 3. **Update the image** in deployment.yaml to your registry:
    ```yaml
-   image: ghcr.io/your-org/autotriage:v0.1.0
+   image: ghcr.io/your-org/trifourier:v0.1.0
    ```
 
 4. **Apply**:
@@ -169,17 +169,17 @@ See [Helm Chart Deployment](#helm-chart-deployment) below.
 
 ```bash
 # Check pod status
-kubectl get pods -n autotriage
+kubectl get pods -n trifourier
 
 # Check logs for startup errors
-kubectl logs -f deployment/autotriage -n autotriage
+kubectl logs -f deployment/trifourier -n trifourier
 
 # Verify health endpoint
-kubectl exec -n autotriage deployment/autotriage -- \
+kubectl exec -n trifourier deployment/trifourier -- \
   curl -sf http://localhost:8000/health
 
 # Check RBAC
-kubectl auth can-i list pods --as=system:serviceaccount:autotriage:autotriage
+kubectl auth can-i list pods --as=system:serviceaccount:trifourier:trifourier
 ```
 
 ---
@@ -190,10 +190,10 @@ kubectl auth can-i list pods --as=system:serviceaccount:autotriage:autotriage
 
 ```bash
 # From the project root
-helm install autotriage deploy/helm/triagebot/ \
-  --namespace autotriage \
+helm install trifourier deploy/helm/trifourier/ \
+  --namespace trifourier \
   --create-namespace \
-  -f deploy/helm/triagebot/values.yaml
+  -f deploy/helm/trifourier/values.yaml
 ```
 
 ### Environment Overrides
@@ -202,27 +202,27 @@ Create environment-specific values files:
 
 ```bash
 # deploy/helm/values-staging.yaml
-helm install autotriage deploy/helm/triagebot/ \
-  --namespace autotriage-staging \
+helm install trifourier deploy/helm/trifourier/ \
+  --namespace trifourier-staging \
   --create-namespace \
-  -f deploy/helm/triagebot/values.yaml \
+  -f deploy/helm/trifourier/values.yaml \
   -f deploy/helm/values-staging.yaml
 ```
 
 ### Upgrade
 
 ```bash
-helm upgrade autotriage deploy/helm/triagebot/ \
-  --namespace autotriage \
+helm upgrade trifourier deploy/helm/trifourier/ \
+  --namespace trifourier \
   --set image.tag=v0.2.0
 ```
 
 ### Uninstall
 
 ```bash
-helm uninstall autotriage --namespace autotriage
+helm uninstall trifourier --namespace trifourier
 # PVC is retained by default; delete manually if needed
-kubectl delete pvc autotriage-graph-pvc -n autotriage
+kubectl delete pvc trifourier-graph-pvc -n trifourier
 ```
 
 ---
@@ -270,34 +270,34 @@ Two CronJobs handle backup:
 
 ```bash
 # Trigger BGSAVE
-curl -X POST http://autotriage.autotriage.svc.cluster.local/api/admin/bgsave
+curl -X POST http://trifourier.trifourier.svc.cluster.local/api/admin/bgsave
 
 # Copy snapshot from pod
-kubectl cp autotriage/$(kubectl get pod -n autotriage -l app.kubernetes.io/name=autotriage -o jsonpath='{.items[0].metadata.name}'):/app/data/graph ./graph-backup/
+kubectl cp trifourier/$(kubectl get pod -n trifourier -l app.kubernetes.io/name=trifourier -o jsonpath='{.items[0].metadata.name}'):/app/data/graph ./graph-backup/
 ```
 
 ### Restore from Backup
 
 ```bash
 # Scale down to prevent writes during restore
-kubectl scale deployment/autotriage --replicas=0 -n autotriage
+kubectl scale deployment/trifourier --replicas=0 -n trifourier
 
 # Copy backup to PVC (using a temporary pod)
 kubectl run restore --rm -it --image=alpine \
-  --overrides='{"spec":{"containers":[{"name":"restore","image":"alpine","command":["sh"],"stdin":true,"tty":true,"volumeMounts":[{"name":"graph","mountPath":"/data"}]}],"volumes":[{"name":"graph","persistentVolumeClaim":{"claimName":"autotriage-graph-pvc"}}]}}' \
-  -n autotriage
+  --overrides='{"spec":{"containers":[{"name":"restore","image":"alpine","command":["sh"],"stdin":true,"tty":true,"volumeMounts":[{"name":"graph","mountPath":"/data"}]}],"volumes":[{"name":"graph","persistentVolumeClaim":{"claimName":"trifourier-graph-pvc"}}]}}' \
+  -n trifourier
 
 # Inside the pod: copy your backup files to /data/
 
 # Scale back up
-kubectl scale deployment/autotriage --replicas=1 -n autotriage
+kubectl scale deployment/trifourier --replicas=1 -n trifourier
 ```
 
 ### Restore from S3
 
 ```bash
 # Download from S3
-aws s3 sync s3://autotriage-backups/graph-snapshots/LATEST/ ./graph-restore/
+aws s3 sync s3://trifourier-backups/graph-snapshots/LATEST/ ./graph-restore/
 
 # Follow manual restore steps above with the downloaded files
 ```
@@ -319,10 +319,10 @@ curl -X POST http://localhost:8000/api/admin/rebuild-graph
 
 ```bash
 # Check events
-kubectl describe pod -l app.kubernetes.io/name=autotriage -n autotriage
+kubectl describe pod -l app.kubernetes.io/name=trifourier -n trifourier
 
 # Check logs
-kubectl logs -l app.kubernetes.io/name=autotriage -n autotriage --previous
+kubectl logs -l app.kubernetes.io/name=trifourier -n trifourier --previous
 ```
 
 Common issues:
@@ -336,20 +336,20 @@ FalkorDBLite runs as a subprocess. If it fails:
 
 ```bash
 # Check for disk space issues
-kubectl exec -n autotriage deployment/autotriage -- df -h /app/data/graph
+kubectl exec -n trifourier deployment/trifourier -- df -h /app/data/graph
 
 # Check for corrupted data
-kubectl exec -n autotriage deployment/autotriage -- ls -la /app/data/graph/
+kubectl exec -n trifourier deployment/trifourier -- ls -la /app/data/graph/
 ```
 
 ### Health Check Fails
 
 ```bash
 # Test from inside the pod
-kubectl exec -n autotriage deployment/autotriage -- curl -v http://localhost:8000/health
+kubectl exec -n trifourier deployment/trifourier -- curl -v http://localhost:8000/health
 
 # Check if port 8000 is listening
-kubectl exec -n autotriage deployment/autotriage -- ss -tlnp
+kubectl exec -n trifourier deployment/trifourier -- ss -tlnp
 ```
 
 ### RBAC Issues
@@ -357,16 +357,16 @@ kubectl exec -n autotriage deployment/autotriage -- ss -tlnp
 ```bash
 # Verify service account permissions
 kubectl auth can-i list pods \
-  --as=system:serviceaccount:autotriage:autotriage \
+  --as=system:serviceaccount:trifourier:trifourier \
   --all-namespaces
 
 kubectl auth can-i get pods/log \
-  --as=system:serviceaccount:autotriage:autotriage \
+  --as=system:serviceaccount:trifourier:trifourier \
   --all-namespaces
 ```
 
 ### Graph Data Lost After Restart
 
-- Verify the PVC is bound: `kubectl get pvc -n autotriage`
+- Verify the PVC is bound: `kubectl get pvc -n trifourier`
 - Verify the volume mount in the pod: `kubectl describe pod ... | grep -A5 Mounts`
 - Ensure the Deployment uses `Recreate` strategy (not `RollingUpdate`) to avoid PVC access conflicts

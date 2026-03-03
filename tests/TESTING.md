@@ -1,4 +1,4 @@
-# TriageBot Testing Conventions
+# Trifourier Testing Conventions
 
 ## Directory Structure
 

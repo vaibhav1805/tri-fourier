@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: autotriage-config
-  namespace: autotriage
+  name: trifourier-config
+  namespace: trifourier
   labels:
-    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/name: trifourier
     app.kubernetes.io/component: config
 data:
   # Graph configuration
@@ -19,4 +19,4 @@ data:
   LOG_LEVEL: "info"
   # OpenTelemetry
   OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.monitoring.svc.cluster.local:4317"
-  OTEL_SERVICE_NAME: "autotriage"
+  OTEL_SERVICE_NAME: "trifourier"

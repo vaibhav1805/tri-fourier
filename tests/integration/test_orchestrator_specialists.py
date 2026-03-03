@@ -9,9 +9,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from triagebot.agents.log_analyzer import analyze_logs, detect_error_patterns
-from triagebot.agents.metrics_analyzer import analyze_metrics, detect_anomalies
-from triagebot.mcp_server import blast_radius, query_graph
+from trifourier.agents.log_analyzer import analyze_logs, detect_error_patterns
+from trifourier.agents.metrics_analyzer import analyze_metrics, detect_anomalies
+from trifourier.mcp_server import blast_radius, query_graph
 
 
 @pytest.mark.integration
@@ -23,7 +23,7 @@ class TestOrchestratorLogAnalyzer:
         mock_entries = [
             {"timestamp": "2026-02-28T10:00:00Z", "message": "ERROR: timeout"},
         ]
-        with patch("triagebot.agents.log_analyzer.search_cloudwatch", return_value=mock_entries):
+        with patch("trifourier.agents.log_analyzer.search_cloudwatch", return_value=mock_entries):
             findings = analyze_logs(
                 services=["checkout-api", "payment-api"],
                 query="timeout",
@@ -39,7 +39,7 @@ class TestOrchestratorLogAnalyzer:
         mock_entries = [
             {"timestamp": "2026-02-28T10:00:00Z", "message": "OOMKilled exit code 137"},
         ]
-        with patch("triagebot.agents.log_analyzer.search_cloudwatch", return_value=mock_entries):
+        with patch("trifourier.agents.log_analyzer.search_cloudwatch", return_value=mock_entries):
             findings = analyze_logs(
                 services=["checkout-api"],
                 query="OOMKill",
@@ -84,8 +84,8 @@ class TestOrchestratorMetricsAnalyzer:
                 return prom_response
             return {"status": "success", "data": {"resultType": "matrix", "result": []}}
 
-        with patch("triagebot.agents.metrics_analyzer.query_prometheus", side_effect=mock_prom):
-            with patch("triagebot.agents.metrics_analyzer.query_cloudwatch_metrics", return_value=[]):
+        with patch("trifourier.agents.metrics_analyzer.query_prometheus", side_effect=mock_prom):
+            with patch("trifourier.agents.metrics_analyzer.query_cloudwatch_metrics", return_value=[]):
                 findings = analyze_metrics(
                     services=["checkout-api"],
                     query="latency",
@@ -115,8 +115,8 @@ class TestOrchestratorMetricsAnalyzer:
                 return prom_response
             return {"status": "success", "data": {"resultType": "matrix", "result": []}}
 
-        with patch("triagebot.agents.metrics_analyzer.query_prometheus", side_effect=mock_prom):
-            with patch("triagebot.agents.metrics_analyzer.query_cloudwatch_metrics", return_value=[]):
+        with patch("trifourier.agents.metrics_analyzer.query_prometheus", side_effect=mock_prom):
+            with patch("trifourier.agents.metrics_analyzer.query_cloudwatch_metrics", return_value=[]):
                 findings = analyze_metrics(
                     services=["checkout-api"],
                     query="CPU saturation",
@@ -142,7 +142,7 @@ class TestOrchestratorGraphIntegration:
         ])
 
         mock_get = AsyncMock(return_value=mock_graph_backend)
-        with patch("triagebot.graph.backend.get_graph_backend", mock_get):
+        with patch("trifourier.graph.backend.get_graph_backend", mock_get):
             result = await query_graph(
                 query_type="service_dependencies",
                 service_name="checkout-api",
@@ -161,7 +161,7 @@ class TestOrchestratorGraphIntegration:
         mock_graph_backend.query = AsyncMock(return_value=[])
 
         mock_get = AsyncMock(return_value=mock_graph_backend)
-        with patch("triagebot.graph.backend.get_graph_backend", mock_get):
+        with patch("trifourier.graph.backend.get_graph_backend", mock_get):
             result = await blast_radius(service_name="checkout-api", max_depth=3)
             assert result["service_name"] == "checkout-api"
             assert result["affected_count"] == 2
@@ -176,7 +176,7 @@ class TestOrchestratorGraphIntegration:
         mock_backend.query = AsyncMock(side_effect=RuntimeError("Graph not initialized"))
 
         mock_get = AsyncMock(return_value=mock_backend)
-        with patch("triagebot.graph.backend.get_graph_backend", mock_get):
+        with patch("trifourier.graph.backend.get_graph_backend", mock_get):
             result = await blast_radius(service_name="nonexistent", max_depth=2)
             assert result["affected_count"] == 0
             assert "error" in result
@@ -185,7 +185,7 @@ class TestOrchestratorGraphIntegration:
     async def test_query_graph_returns_available_types_on_unknown(self, mock_graph_backend):
         """query_graph should list available query types for unknown type."""
         mock_get = AsyncMock(return_value=mock_graph_backend)
-        with patch("triagebot.graph.backend.get_graph_backend", mock_get):
+        with patch("trifourier.graph.backend.get_graph_backend", mock_get):
             result = await query_graph(query_type="unknown_type", service_name="test")
             assert "available_types" in result
             assert "service_dependencies" in result["available_types"]
@@ -198,7 +198,7 @@ class TestMCPServerRoutes:
     def test_register_mcp_routes_adds_endpoints(self):
         """register_mcp_routes should add graph endpoints to FastAPI app."""
         from fastapi import FastAPI
-        from triagebot.mcp_server import register_mcp_routes
+        from trifourier.mcp_server import register_mcp_routes
 
         app = FastAPI()
         register_mcp_routes(app)

@@ -1,4 +1,4 @@
-# TriageBot Phase 2 MVP - Handoff Document
+# Trifourier Phase 2 MVP - Handoff Document
 
 **Date:** 2026-02-28
 **Session:** Phase 2 MVP Development (YOLO Mode)
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-TriageBot Phase 2 MVP is **95% complete** and production-ready for integration testing. All core components have been built, tested, and deployed. The remaining work is wiring real data sources and performance validation.
+Trifourier Phase 2 MVP is **95% complete** and production-ready for integration testing. All core components have been built, tested, and deployed. The remaining work is wiring real data sources and performance validation.
 
 **Session Deliverables:**
 - ✅ 1,568 lines of production code
@@ -21,7 +21,7 @@ TriageBot Phase 2 MVP is **95% complete** and production-ready for integration t
 ## What's Done
 
 ### Phase 1: Research & Architecture ✅
-- Location: `/research/autotriage/`
+- Location: `/research/trifourier/`
 - Documents:
   - `ARCHITECTURE.md` — Technical system design
   - `PROJECT.md` — Implementation roadmap
@@ -32,7 +32,7 @@ TriageBot Phase 2 MVP is **95% complete** and production-ready for integration t
 ### Phase 2: MVP Implementation ✅
 
 **Developer Work (1,568 LOC)**
-- Location: `projects/triagebot/src/`
+- Location: `projects/trifourier/src/`
 - Components:
   - `agents/orchestrator.py` (441 lines) — Strands orchestrator with Graph Pattern
   - `graph/` (439 lines) — GraphBackend ABC, InMemory, FalkorDBLite implementations
@@ -45,7 +45,7 @@ TriageBot Phase 2 MVP is **95% complete** and production-ready for integration t
   - `scripts/seed_graph.py` — Graph population
 
 **DevOps Work**
-- Location: `projects/triagebot/deploy/`
+- Location: `projects/trifourier/deploy/`
 - Deliverables:
   - Dockerfile (production-ready, secure)
   - docker-compose.yml (local dev)
@@ -57,7 +57,7 @@ TriageBot Phase 2 MVP is **95% complete** and production-ready for integration t
   - Deployment guide (DEPLOYMENT.md)
 
 **QA Work**
-- Location: `projects/triagebot/tests/`
+- Location: `projects/trifourier/tests/`
 - Test Suite:
   - 26 active tests (all passing)
     - 20 confidence scoring tests
@@ -111,7 +111,7 @@ System confirms action
 ### 1. Wire Graph Tools to Real FalkorDBLite (5 hours)
 - Currently: Graph tools return mock data
 - Change:
-  - Remove mock data from `src/triagebot/graph/mock.py`
+  - Remove mock data from `src/trifourier/graph/mock.py`
   - Update `InvestigationEngine._query_graph()` to call real `get_graph_backend()`
   - Initialize FalkorDBLite on startup (check if installed, fallback to InMemory)
 - Test:
@@ -148,8 +148,8 @@ System confirms action
 ## Project Structure
 
 ```
-projects/triagebot/
-├── src/triagebot/
+projects/trifourier/
+├── src/trifourier/
 │   ├── agents/
 │   │   └── orchestrator.py          ← Main orchestrator (441 lines)
 │   ├── graph/
@@ -199,7 +199,7 @@ projects/triagebot/
 │   │   ├── service.yaml
 │   │   ├── backup-cronjob.yaml
 │   │   └── kustomization.yaml
-│   └── helm/triagebot/
+│   └── helm/trifourier/
 │       ├── Chart.yaml
 │       ├── values.yaml
 │       ├── templates/ (9 templates)
@@ -226,18 +226,18 @@ projects/triagebot/
 
 ### 1. Start Development Environment
 ```bash
-cd projects/triagebot
+cd projects/trifourier
 ./scripts/dev-setup.sh
 # Installs deps, creates .env, starts server with auto-reload
 ```
 
 ### 2. Review Key Files
-- `src/triagebot/agents/orchestrator.py` — Understand orchestrator flow
-- `src/triagebot/graph/backend.py` — Understand graph abstraction
-- `/research/autotriage/ARCHITECTURE.md` — Refresh system design
+- `src/trifourier/agents/orchestrator.py` — Understand orchestrator flow
+- `src/trifourier/graph/backend.py` — Understand graph abstraction
+- `/research/trifourier/ARCHITECTURE.md` — Refresh system design
 
 ### 3. Next Task: Wire Graph Tools
-- Target: `src/triagebot/agents/orchestrator.py` line ~150 (`_query_graph()` method)
+- Target: `src/trifourier/agents/orchestrator.py` line ~150 (`_query_graph()` method)
 - Change from mock to real FalkorDBLite backend
 - Update `get_graph_backend()` factory function
 

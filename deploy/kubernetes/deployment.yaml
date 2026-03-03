@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: autotriage
-  namespace: autotriage
+  name: trifourier
+  namespace: trifourier
   labels:
-    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/name: trifourier
     app.kubernetes.io/component: server
 spec:
   replicas: 1  # Single replica with embedded graph
@@ -12,23 +12,23 @@ spec:
     type: Recreate  # Recreate to avoid PVC conflicts (ReadWriteOnce)
   selector:
     matchLabels:
-      app.kubernetes.io/name: autotriage
+      app.kubernetes.io/name: trifourier
       app.kubernetes.io/component: server
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: autotriage
+        app.kubernetes.io/name: trifourier
         app.kubernetes.io/component: server
     spec:
-      serviceAccountName: autotriage
+      serviceAccountName: trifourier
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001
         runAsGroup: 1001
         fsGroup: 1001
       containers:
-        - name: autotriage
-          image: autotriage:latest
+        - name: trifourier
+          image: trifourier:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -36,9 +36,9 @@ spec:
               protocol: TCP
           envFrom:
             - configMapRef:
-                name: autotriage-config
+                name: trifourier-config
             - secretRef:
-                name: autotriage-secrets
+                name: trifourier-secrets
           resources:
             requests:
               cpu: "500m"
@@ -75,5 +75,5 @@ spec:
       volumes:
         - name: graph-data
           persistentVolumeClaim:
-            claimName: autotriage-graph-pvc
+            claimName: trifourier-graph-pvc
       terminationGracePeriodSeconds: 30
