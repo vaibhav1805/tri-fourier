@@ -1,0 +1,60 @@
+{
+  "cloudwatch_error_spike": {
+    "description": "Simulated CloudWatch Logs Insights result for error spike scenario",
+    "results": [
+      {
+        "timestamp": "2026-02-28T10:00:00Z",
+        "message": "ERROR [checkout-api] java.sql.SQLException: Cannot get a connection, pool error Timeout waiting for idle object",
+        "log_group": "/aws/eks/production/checkout-api",
+        "level": "ERROR"
+      },
+      {
+        "timestamp": "2026-02-28T10:00:05Z",
+        "message": "ERROR [checkout-api] org.springframework.dao.DataAccessResourceFailureException: Could not open JDBC Connection",
+        "log_group": "/aws/eks/production/checkout-api",
+        "level": "ERROR"
+      },
+      {
+        "timestamp": "2026-02-28T10:00:10Z",
+        "message": "ERROR [checkout-api] Connection pool exhausted: active=50, max=50, idle=0",
+        "log_group": "/aws/eks/production/checkout-api",
+        "level": "ERROR"
+      },
+      {
+        "timestamp": "2026-02-28T10:00:15Z",
+        "message": "WARN [checkout-api] Retry attempt 3/3 for database connection failed",
+        "log_group": "/aws/eks/production/checkout-api",
+        "level": "WARN"
+      },
+      {
+        "timestamp": "2026-02-28T10:00:20Z",
+        "message": "ERROR [payment-api] Upstream service checkout-api returned 503 Service Unavailable",
+        "log_group": "/aws/eks/production/payment-api",
+        "level": "ERROR"
+      }
+    ]
+  },
+  "oom_kill": {
+    "description": "Simulated logs for OOMKill scenario",
+    "results": [
+      {
+        "timestamp": "2026-02-28T09:55:00Z",
+        "message": "WARN [checkout-api] Memory usage at 85% of limit (435Mi / 512Mi)",
+        "log_group": "/aws/eks/production/checkout-api",
+        "level": "WARN"
+      },
+      {
+        "timestamp": "2026-02-28T09:58:00Z",
+        "message": "WARN [checkout-api] GC overhead threshold exceeded, heap nearly full",
+        "log_group": "/aws/eks/production/checkout-api",
+        "level": "WARN"
+      },
+      {
+        "timestamp": "2026-02-28T10:00:00Z",
+        "message": "ERROR [checkout-api] Container killed: OOMKilled (exit code 137)",
+        "log_group": "/aws/eks/production/checkout-api",
+        "level": "ERROR"
+      }
+    ]
+  }
+}

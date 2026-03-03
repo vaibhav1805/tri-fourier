@@ -1,0 +1,101 @@
+---
+# BGSAVE snapshot every 15 minutes
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: autotriage-bgsave
+  namespace: autotriage
+  labels:
+    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/component: backup
+spec:
+  schedule: "*/15 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: bgsave
+              image: curlimages/curl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "Triggering BGSAVE snapshot..."
+                  curl -sf http://autotriage.autotriage.svc.cluster.local/api/admin/bgsave \
+                    -X POST \
+                    -H "Content-Type: application/json" \
+                    && echo "BGSAVE triggered successfully" \
+                    || echo "BGSAVE trigger failed"
+              resources:
+                requests:
+                  cpu: "50m"
+                  memory: "32Mi"
+                limits:
+                  cpu: "100m"
+                  memory: "64Mi"
+---
+# Nightly S3 export for disaster recovery
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: autotriage-s3-export
+  namespace: autotriage
+  labels:
+    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/component: backup
+spec:
+  schedule: "0 2 * * *"  # 2 AM daily
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 7
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: autotriage
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            fsGroup: 1001
+          containers:
+            - name: s3-export
+              image: amazon/aws-cli:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+                  BUCKET="${S3_BACKUP_BUCKET:-autotriage-backups}"
+                  PREFIX="${S3_BACKUP_PREFIX:-graph-snapshots}"
+                  echo "Exporting graph data to s3://${BUCKET}/${PREFIX}/${TIMESTAMP}/"
+                  aws s3 sync /app/data/graph/ "s3://${BUCKET}/${PREFIX}/${TIMESTAMP}/" \
+                    --exclude "*.lock" \
+                    && echo "Export complete" \
+                    || echo "Export failed"
+              env:
+                - name: S3_BACKUP_BUCKET
+                  value: "autotriage-backups"
+                - name: S3_BACKUP_PREFIX
+                  value: "graph-snapshots"
+              volumeMounts:
+                - name: graph-data
+                  mountPath: /app/data/graph
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: "100m"
+                  memory: "128Mi"
+                limits:
+                  cpu: "500m"
+                  memory: "256Mi"
+          volumes:
+            - name: graph-data
+              persistentVolumeClaim:
+                claimName: autotriage-graph-pvc

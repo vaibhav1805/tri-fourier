@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: autotriage
+  labels:
+    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/part-of: autotriage

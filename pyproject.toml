@@ -1,0 +1,86 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "triagebot"
+version = "0.1.0"
+description = "Kubernetes-first production troubleshooting agent"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12"
+authors = [
+    { name = "TriageBot Team" },
+]
+
+dependencies = [
+    "strands-agents>=1.28.0",
+    "strands-agents-tools>=0.1.0",
+    "graphiti-core[falkordb]>=0.6.0",
+    "falkordblite>=0.4.0",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "slack-sdk>=3.33.0",
+    "slack-bolt>=1.21.0",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.7.0",
+    "httpx>=0.28.0",
+    "structlog>=24.4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "pre-commit>=4.0.0",
+]
+anthropic = [
+    "strands-agents[anthropic]>=1.28.0",
+]
+bedrock = [
+    "boto3>=1.35.0",
+]
+mcp = [
+    "mcp>=1.0.0",
+]
+aws = [
+    "boto3>=1.35.0",
+]
+
+[project.scripts]
+triagebot = "triagebot.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/triagebot"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM", "TCH"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["triagebot"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-v --tb=short --strict-markers"
+markers = [
+    "unit: Unit tests (fast, no external deps)",
+    "integration: Integration tests (may use embedded graph)",
+    "e2e: End-to-end workflow tests",
+    "performance: Performance benchmark tests",
+    "security: Security validation tests",
+    "slow: Tests that take > 5 seconds",
+]

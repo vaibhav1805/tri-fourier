@@ -1,0 +1,88 @@
+{{- if .Values.backup.bgsave.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "autotriage.fullname" . }}-bgsave
+  labels:
+    {{- include "autotriage.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backup
+spec:
+  schedule: {{ .Values.backup.bgsave.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: bgsave
+              image: curlimages/curl:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  curl -sf http://{{ include "autotriage.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local/api/admin/bgsave \
+                    -X POST -H "Content-Type: application/json" \
+                    && echo "BGSAVE triggered" || echo "BGSAVE failed"
+              resources:
+                requests:
+                  cpu: "50m"
+                  memory: "32Mi"
+                limits:
+                  cpu: "100m"
+                  memory: "64Mi"
+{{- end }}
+---
+{{- if .Values.backup.s3Export.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "autotriage.fullname" . }}-s3-export
+  labels:
+    {{- include "autotriage.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backup
+spec:
+  schedule: {{ .Values.backup.s3Export.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 7
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: {{ include "autotriage.serviceAccountName" . }}
+          {{- with .Values.podSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: s3-export
+              image: amazon/aws-cli:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+                  aws s3 sync /app/data/graph/ \
+                    "s3://{{ .Values.backup.s3Export.bucket }}/{{ .Values.backup.s3Export.prefix }}/${TIMESTAMP}/" \
+                    --exclude "*.lock" \
+                    && echo "Export complete" || echo "Export failed"
+              volumeMounts:
+                - name: graph-data
+                  mountPath: /app/data/graph
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: "100m"
+                  memory: "128Mi"
+                limits:
+                  cpu: "500m"
+                  memory: "256Mi"
+          volumes:
+            - name: graph-data
+              persistentVolumeClaim:
+                claimName: {{ include "autotriage.fullname" . }}-graph-pvc
+{{- end }}

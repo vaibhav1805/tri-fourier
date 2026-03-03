@@ -1,0 +1,64 @@
+services:
+  autotriage:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: autotriage
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist graph data across container restarts
+      - autotriage-graph:/app/data/graph
+      # Persist snapshots
+      - autotriage-snapshots:/app/data/snapshots
+      # Mount source code for development (live reload)
+      - ./src:/app/src:ro
+      - ./config:/app/config:ro
+    environment:
+      # Graph configuration
+      - GRAPH_BACKEND=falkordb_lite
+      - GRAPH_DATA_DIR=/app/data/graph
+      # LLM provider
+      - MODEL_PROVIDER=${MODEL_PROVIDER:-bedrock}
+      - MODEL_ID=${MODEL_ID:-us.anthropic.claude-sonnet-4-6-v1:0}
+      # AWS credentials (from host environment or .env file)
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN:-}
+      # Slack integration
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN:-}
+      - SLACK_APP_TOKEN=${SLACK_APP_TOKEN:-}
+      - SLACK_SIGNING_SECRET=${SLACK_SIGNING_SECRET:-}
+      # Kubernetes (optional for local dev)
+      - KUBECONFIG=${KUBECONFIG:-}
+      # Prometheus endpoint
+      - PROMETHEUS_URL=${PROMETHEUS_URL:-http://prometheus:9090}
+      # Logging
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      # OpenTelemetry
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+    env_file:
+      - path: .env
+        required: false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 4G
+        reservations:
+          cpus: "0.5"
+          memory: 2G
+
+volumes:
+  autotriage-graph:
+    driver: local
+  autotriage-snapshots:
+    driver: local

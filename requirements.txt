@@ -1,0 +1,19 @@
+# Core dependencies
+strands-agents>=1.28.0
+strands-agents-tools>=0.1.0
+graphiti-core[falkordb]>=0.6.0
+falkordblite>=0.4.0
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+slack-sdk>=3.33.0
+slack-bolt>=1.21.0
+pydantic>=2.10.0
+pydantic-settings>=2.7.0
+httpx>=0.28.0
+structlog>=24.4.0
+
+# Optional: AWS integration (CloudWatch Logs + Metrics)
+# boto3>=1.35.0
+
+# Optional: MCP server
+# mcp>=1.0.0

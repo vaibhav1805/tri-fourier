@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: autotriage-config
+  namespace: autotriage
+  labels:
+    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/component: config
+data:
+  # Graph configuration
+  GRAPH_BACKEND: "falkordb_lite"
+  GRAPH_DATA_DIR: "/app/data/graph"
+  # LLM provider
+  MODEL_PROVIDER: "bedrock"
+  MODEL_ID: "us.anthropic.claude-sonnet-4-6-v1:0"
+  # Prometheus endpoint
+  PROMETHEUS_URL: "http://prometheus.monitoring.svc.cluster.local:9090"
+  # Logging
+  LOG_LEVEL: "info"
+  # OpenTelemetry
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.monitoring.svc.cluster.local:4317"
+  OTEL_SERVICE_NAME: "autotriage"

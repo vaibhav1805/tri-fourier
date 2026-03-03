@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autotriage
+  namespace: autotriage
+  labels:
+    app.kubernetes.io/name: autotriage
+    app.kubernetes.io/component: server
+spec:
+  replicas: 1  # Single replica with embedded graph
+  strategy:
+    type: Recreate  # Recreate to avoid PVC conflicts (ReadWriteOnce)
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: autotriage
+      app.kubernetes.io/component: server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: autotriage
+        app.kubernetes.io/component: server
+    spec:
+      serviceAccountName: autotriage
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      containers:
+        - name: autotriage
+          image: autotriage:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: autotriage-config
+            - secretRef:
+                name: autotriage-secrets
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "2Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+          volumeMounts:
+            - name: graph-data
+              mountPath: /app/data/graph
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 12  # Allow up to 60s for FalkorDBLite startup
+      volumes:
+        - name: graph-data
+          persistentVolumeClaim:
+            claimName: autotriage-graph-pvc
+      terminationGracePeriodSeconds: 30

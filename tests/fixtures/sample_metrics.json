@@ -1,0 +1,101 @@
+{
+  "latency_spike": {
+    "description": "Prometheus query result showing latency spike on checkout-api",
+    "query": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{service='checkout-api'}[5m]))",
+    "data": {
+      "resultType": "matrix",
+      "result": [
+        {
+          "metric": {
+            "__name__": "http_request_duration_seconds",
+            "service": "checkout-api",
+            "namespace": "production"
+          },
+          "values": [
+            [1709100000, "0.180"],
+            [1709100060, "0.195"],
+            [1709100120, "0.210"],
+            [1709100180, "0.450"],
+            [1709100240, "1.200"],
+            [1709100300, "2.300"],
+            [1709100360, "2.800"],
+            [1709100420, "3.100"]
+          ]
+        }
+      ]
+    }
+  },
+  "error_rate_spike": {
+    "description": "Prometheus query result showing error rate spike",
+    "query": "rate(http_requests_total{service='checkout-api', status=~'5..'}[5m]) / rate(http_requests_total{service='checkout-api'}[5m])",
+    "data": {
+      "resultType": "matrix",
+      "result": [
+        {
+          "metric": {
+            "service": "checkout-api",
+            "namespace": "production"
+          },
+          "values": [
+            [1709100000, "0.001"],
+            [1709100060, "0.002"],
+            [1709100120, "0.015"],
+            [1709100180, "0.085"],
+            [1709100240, "0.230"],
+            [1709100300, "0.450"],
+            [1709100360, "0.520"]
+          ]
+        }
+      ]
+    }
+  },
+  "cpu_saturation": {
+    "description": "CPU utilization approaching saturation",
+    "query": "rate(container_cpu_usage_seconds_total{pod=~'checkout-api.*'}[5m])",
+    "data": {
+      "resultType": "matrix",
+      "result": [
+        {
+          "metric": {
+            "pod": "checkout-api-abc123",
+            "namespace": "production"
+          },
+          "values": [
+            [1709100000, "0.30"],
+            [1709100060, "0.45"],
+            [1709100120, "0.65"],
+            [1709100180, "0.78"],
+            [1709100240, "0.89"],
+            [1709100300, "0.95"],
+            [1709100360, "0.98"]
+          ]
+        }
+      ]
+    }
+  },
+  "normal_baseline": {
+    "description": "Normal metrics with no anomalies (for negative test cases)",
+    "query": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{service='checkout-api'}[5m]))",
+    "data": {
+      "resultType": "matrix",
+      "result": [
+        {
+          "metric": {
+            "__name__": "http_request_duration_seconds",
+            "service": "checkout-api",
+            "namespace": "production"
+          },
+          "values": [
+            [1709100000, "0.180"],
+            [1709100060, "0.195"],
+            [1709100120, "0.185"],
+            [1709100180, "0.190"],
+            [1709100240, "0.200"],
+            [1709100300, "0.188"],
+            [1709100360, "0.192"]
+          ]
+        }
+      ]
+    }
+  }
+}
